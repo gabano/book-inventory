@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Scanner Pro - Multi-Idioma</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f7f6; padding: 15px; font-family: 'Segoe UI', sans-serif; }
+        #interactive { width: 100%; height: 320px; border-radius: 12px; background: #000; overflow: hidden; border: 3px solid #6c757d; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-log { background: #fff; border-radius: 12px; padding: 20px; height: 580px; overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .scanner-card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Indicador de Status Interno */
+        #statusIndicator {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .status-aguardando { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .status-sucesso { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        
+        .serie-group { background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #dee2e6; }
+        .required-label::after { content: " *"; color: #dc3545; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="scanner-card">
+                <h5 class="mb-3 fw-bold text-dark text-center">📚 Registro Multi-Idioma</h5>
+                
+                <select id="camList" class="form-select mb-3" onchange="startCam()"></select>
+                <div id="interactive" class="mb-3"></div>
+                
+                <div id="statusIndicator" class="status-aguardando">
+                    🟡 Aguardando leitura de código...
+                </div>
+
+                <div id="formLivro">
+                    <label class="small fw-bold required-label">ISBN</label>
+                    <input type="text" id="isbn" class="form-control mb-2 fw-bold" placeholder="..." readonly>
+                    
+                    <label class="small fw-bold required-label">Título do Livro</label>
+                    <input type="text" id="titulo" class="form-control mb-2" placeholder="Título">
+                    
+                    <label class="small fw-bold">Autor</label>
+                    <input type="text" id="autor" class="form-control mb-2" placeholder="Autor">
+                    
+                    <label class="small fw-bold">Ano</label>
+                    <input type="text" id="ano" class="form-control mb-2" placeholder="Ano">
+                    
+                    <div class="serie-group">
+                        <small class="d-block fw-bold mb-2">Série (Opcional)</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            <input type="checkbox" class="serie" value="Y6"> Y6
+                            <input type="checkbox" class="serie" value="Y7"> Y7
+                            <input type="checkbox" class="serie" value="Y8"> Y8
+                            <input type="checkbox" class="serie" value="Y9"> Y9
+                            <input type="checkbox" class="serie" value="Outros"> Outros
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-lg w-100 fw-bold shadow-sm" onclick="confirmarESalvar()">
+                        SALVAR E PRÓXIMO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="sidebar-log">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold m-0 text-secondary">Arquivo Acumulado (CSV)</h6>
+                    <button class="btn btn-primary btn-sm px-4 fw-bold" onclick="gerarExcel()">BAIXAR EXCEL (.xlsx)</button>
+                </div>
+                <hr>
+                <div id="csvDisplay" style="white-space: pre; font-family: 'Consolas', monospace; font-size: 13px;">ISBN;Titulo;Autor;Ano;Serie;Quantidade</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let inventario = [];
+    let travado = false;
+
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+        const list = document.getElementById('camList');
+        devices.filter(d => d.kind === 'videoinput').forEach(d => {
+            let opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.text = d.label || 'Câmera ' + (list.length + 1);
+            list.appendChild(opt);
+        });
+        if (list.length > 0) startCam();
+    });
+
+    function startCam() {
+        Quagga.init({
+            inputStream: { type: "LiveStream", target: "#interactive", constraints: { deviceId: document.getElementById('camList').value } },
+            decoder: { readers: ["ean_reader"] }
+        }, (err) => { if (!err) Quagga.start(); });
+    }
+
+    Quagga.onDetected(data => {
+        if (!travado) {
+            travado = true;
+            buscarDados(data.codeResult.code);
+        }
+    });
+
+    async function buscarDados(isbn) {
+        document.getElementById('isbn').value = isbn;
+        
+        // Altera status para VERDE na interface
+        const status = document.getElementById('statusIndicator');
+        status.innerText = "✅ Leitura feita! Verifique os dados.";
+        status.className = "status-sucesso";
+
+        try {
+            // hl=pt-BR força a busca em fontes brasileiras/português
+            const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
+            const json = await res.json();
+            
+            if (json.items) {
+                const info = json.items[0].volumeInfo;
+                document.getElementById('titulo').value = info.title || "";
+                document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "Não informado";
+                document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "Não informado";
+            }
+        } catch(e) {
+            console.log("Erro ao buscar dados na API.");
+        }
+    }
+
+    function confirmarESalvar() {
+        const isbn = document.getElementById('isbn').value;
+        const titulo = document.getElementById('titulo').value;
+        
+        if (!isbn || !titulo.trim()) {
+            alert("⚠️ ISBN e Título são obrigatórios.");
+            return;
+        }
+
+        const seriesArr = Array.from(document.querySelectorAll('.serie:checked')).map(c => c.value);
+        const seriesStr = seriesArr.length > 0 ? seriesArr.join(", ") : "Nenhuma";
+
+        const itemExistente = inventario.find(i => i.ISBN === isbn && i.Serie === seriesStr);
+        if (itemExistente) {
+            itemExistente.Quantidade += 1;
+        } else {
+            inventario.push({ 
+                ISBN: isbn, 
+                Titulo: titulo.trim(), 
+                Autor: document.getElementById('autor').value || "Não informado", 
+                Ano: document.getElementById('ano').value || "Não informado", 
+                Serie: seriesStr, 
+                Quantidade: 1 
+            });
+        }
+
+        atualizarLog();
+        resetForm();
+    }
+
+    function atualizarLog() {
+        const display = document.getElementById('csvDisplay');
+        let txt = "ISBN;Titulo;Autor;Ano;Serie;Quantidade";
+        inventario.forEach(i => {
+            txt += `\n${i.ISBN};${i.Titulo};${i.Autor};${i.Ano};${i.Serie};${i.Quantidade}`;
+        });
+        display.innerText = txt;
+    }
+
+    function resetForm() {
+        document.getElementById('isbn').value = "";
+        document.getElementById('titulo').value = "";
+        document.getElementById('autor').value = "";
+        document.getElementById('ano').value = "";
+        document.querySelectorAll('.serie').forEach(c => c.checked = false);
+        
+        // Volta status para AMARELO
+        const status = document.getElementById('statusIndicator');
+        status.innerText = "🟡 Aguardando leitura de código...";
+        status.className = "status-aguardando";
+        
+        travado = false; 
+    }
+
+    function gerarExcel() {
+        if (inventario.length === 0) return;
+        const ws = XLSX.utils.json_to_sheet(inventario);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+        XLSX.writeFile(wb, "books_db.xlsx");
+    }
+</script>
+</body>
+</html>
