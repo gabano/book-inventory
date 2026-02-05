@@ -2,95 +2,108 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Scanner Pro - Multi-Idioma</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scanner Mobile Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f7f6; padding: 15px; font-family: 'Segoe UI', sans-serif; }
-        #interactive { width: 100%; height: 320px; border-radius: 12px; background: #000; overflow: hidden; border: 3px solid #6c757d; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .sidebar-log { background: #fff; border-radius: 12px; padding: 20px; height: 580px; overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .scanner-card { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        :root { --primary-color: #4a90e2; --success-color: #2ecc71; --warning-color: #f1c40f; }
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
-        /* Indicador de Status Interno */
-        #statusIndicator {
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
+        /* Container da Câmera estilo App */
+        #interactive { 
+            width: 100%; 
+            height: 250px; 
+            border-radius: 20px; 
+            background: #000; 
+            overflow: hidden; 
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border: 4px solid #fff;
         }
-        .status-aguardando { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-        .status-sucesso { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        video { width: 100%; height: 100%; object-fit: cover; }
         
-        .serie-group { background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #dee2e6; }
-        .required-label::after { content: " *"; color: #dc3545; }
+        /* Mira do Scanner */
+        .scanner-laser {
+            position: absolute;
+            top: 50%; left: 10%; right: 10%;
+            height: 2px; background: rgba(255, 0, 0, 0.5);
+            box-shadow: 0 0 10px red;
+            z-index: 10;
+            animation: scanning 2s infinite;
+        }
+        @keyframes scanning { 0% { top: 20%; } 50% { top: 80%; } 100% { top: 20%; } }
+
+        /* Estilização dos Cards */
+        .app-card { background: #fff; border-radius: 25px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .status-badge { 
+            font-size: 0.9rem; padding: 8px 15px; border-radius: 50px; font-weight: 600; 
+            text-align: center; margin-bottom: 15px; display: block;
+        }
+        .status-wait { background: #fef9e7; color: #996515; }
+        .status-done { background: #e8f8f5; color: #117a65; }
+
+        /* Botões Mobile */
+        .btn-main { border-radius: 15px; padding: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .log-preview { font-size: 0.75rem; color: #7f8c8d; border-top: 1px solid #eee; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-5">
-            <div class="scanner-card">
-                <h5 class="mb-3 fw-bold text-dark text-center">📚 Registro Multi-Idioma</h5>
-                
-                <select id="camList" class="form-select mb-3" onchange="startCam()"></select>
-                <div id="interactive" class="mb-3"></div>
-                
-                <div id="statusIndicator" class="status-aguardando">
-                    🟡 Aguardando leitura de código...
-                </div>
+<div class="container py-3">
+    <div class="app-card text-center">
+        <h5 class="fw-bold mb-3">Escaneie o Código</h5>
+        <div id="interactive">
+            <div class="scanner-laser"></div>
+        </div>
+        <div class="mt-3">
+            <select id="camList" class="form-select border-0 bg-light rounded-pill" onchange="startCam()"></select>
+        </div>
+    </div>
 
-                <div id="formLivro">
-                    <label class="small fw-bold required-label">ISBN</label>
-                    <input type="text" id="isbn" class="form-control mb-2 fw-bold" placeholder="..." readonly>
-                    
-                    <label class="small fw-bold required-label">Título do Livro</label>
-                    <input type="text" id="titulo" class="form-control mb-2" placeholder="Título">
-                    
-                    <label class="small fw-bold">Autor</label>
-                    <input type="text" id="autor" class="form-control mb-2" placeholder="Autor">
-                    
-                    <label class="small fw-bold">Ano</label>
-                    <input type="text" id="ano" class="form-control mb-2" placeholder="Ano">
-                    
-                    <div class="serie-group">
-                        <small class="d-block fw-bold mb-2">Série (Opcional)</small>
-                        <div class="d-flex flex-wrap gap-2">
-                            <input type="checkbox" class="serie" value="Y6"> Y6
-                            <input type="checkbox" class="serie" value="Y7"> Y7
-                            <input type="checkbox" class="serie" value="Y8"> Y8
-                            <input type="checkbox" class="serie" value="Y9"> Y9
-                            <input type="checkbox" class="serie" value="Outros"> Outros
-                        </div>
-                    </div>
-
-                    <button class="btn btn-success btn-lg w-100 fw-bold shadow-sm" onclick="confirmarESalvar()">
-                        SALVAR E PRÓXIMO
-                    </button>
-                </div>
+    <div class="app-card">
+        <span id="statusLabel" class="status-badge status-wait">AGUARDANDO LEITURA...</span>
+        
+        <div class="row g-2">
+            <div class="col-12">
+                <input type="text" id="isbn" class="form-control bg-light border-0 py-3 rounded-4 fw-bold" placeholder="ISBN" readonly>
+            </div>
+            <div class="col-12">
+                <input type="text" id="titulo" class="form-control border-0 bg-light py-3 rounded-4" placeholder="Título do Livro">
+            </div>
+            <div class="col-6">
+                <input type="text" id="autor" class="form-control border-0 bg-light py-3 rounded-4" placeholder="Autor">
+            </div>
+            <div class="col-6">
+                <input type="text" id="ano" class="form-control border-0 bg-light py-3 rounded-4" placeholder="Ano">
             </div>
         </div>
 
-        <div class="col-md-7">
-            <div class="sidebar-log">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold m-0 text-secondary">Arquivo Acumulado (CSV)</h6>
-                    <button class="btn btn-primary btn-sm px-4 fw-bold" onclick="gerarExcel()">BAIXAR EXCEL (.xlsx)</button>
-                </div>
-                <hr>
-                <div id="csvDisplay" style="white-space: pre; font-family: 'Consolas', monospace; font-size: 13px;">ISBN;Titulo;Autor;Ano;Serie;Quantidade</div>
+        <div class="my-3 p-3 bg-light rounded-4">
+            <small class="fw-bold d-block mb-2 text-muted">Série:</small>
+            <div class="d-flex flex-wrap gap-2">
+                <input type="checkbox" class="btn-check" id="y6" value="Y6"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y6">Y6</label>
+                <input type="checkbox" class="btn-check" id="y7" value="Y7"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y7">Y7</label>
+                <input type="checkbox" class="btn-check" id="y8" value="Y8"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y8">Y8</label>
+                <input type="checkbox" class="btn-check" id="y9" value="Y9"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y9">Y9</label>
+                <input type="checkbox" class="btn-check" id="ou" value="Outros"><label class="btn btn-outline-primary btn-sm rounded-pill" for="ou">Outros</label>
             </div>
         </div>
+
+        <button class="btn btn-success btn-main w-100 mb-2" onclick="saveData()">Salvar Registro</button>
+        <button class="btn btn-primary btn-main w-100 mb-2" onclick="downloadExcel()">Baixar Planilha</button>
+    </div>
+
+    <div class="app-card">
+        <h6 class="fw-bold mb-2">Últimos Registros (CSV)</h6>
+        <div id="csvPreview" class="log-preview" style="max-height: 100px; overflow-y: auto;">ISBN;Titulo;Qtd</div>
     </div>
 </div>
 
 <script>
-    let inventario = [];
-    let travado = false;
+    let inventory = [];
+    let isPaused = false;
 
     navigator.mediaDevices.enumerateDevices().then(devices => {
         const list = document.getElementById('camList');
@@ -105,79 +118,71 @@
 
     function startCam() {
         Quagga.init({
-            inputStream: { type: "LiveStream", target: "#interactive", constraints: { deviceId: document.getElementById('camList').value } },
-            decoder: { readers: ["ean_reader"] }
+            inputStream: { 
+                type: "LiveStream", 
+                target: "#interactive",
+                constraints: { 
+                    deviceId: document.getElementById('camList').value,
+                    width: { min: 640 },
+                    height: { min: 480 },
+                    facingMode: "environment" // Prioriza câmera traseira
+                }
+            },
+            decoder: { readers: ["ean_reader", "code_128_reader"] },
+            locate: true // Ajuda a encontrar o código em imagens ruidosas
         }, (err) => { if (!err) Quagga.start(); });
     }
 
     Quagga.onDetected(data => {
-        if (!travado) {
-            travado = true;
-            buscarDados(data.codeResult.code);
+        if (!isPaused) {
+            isPaused = true;
+            const code = data.codeResult.code;
+            document.getElementById('isbn').value = code;
+            document.getElementById('statusLabel').innerText = "LEITURA REALIZADA!";
+            document.getElementById('statusLabel').className = "status-badge status-done";
+            fetchBook(code);
         }
     });
 
-    async function buscarDados(isbn) {
-        document.getElementById('isbn').value = isbn;
-        
-        // Altera status para VERDE na interface
-        const status = document.getElementById('statusIndicator');
-        status.innerText = "✅ Leitura feita! Verifique os dados.";
-        status.className = "status-sucesso";
-
+    async function fetchBook(isbn) {
         try {
-            // hl=pt-BR força a busca em fontes brasileiras/português
             const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
             const json = await res.json();
-            
             if (json.items) {
                 const info = json.items[0].volumeInfo;
                 document.getElementById('titulo').value = info.title || "";
-                document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "Não informado";
-                document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "Não informado";
+                document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "";
+                document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "";
             }
-        } catch(e) {
-            console.log("Erro ao buscar dados na API.");
-        }
+        } catch(e) {}
     }
 
-    function confirmarESalvar() {
+    function saveData() {
         const isbn = document.getElementById('isbn').value;
         const titulo = document.getElementById('titulo').value;
-        
-        if (!isbn || !titulo.trim()) {
-            alert("⚠️ ISBN e Título são obrigatórios.");
-            return;
-        }
+        const series = Array.from(document.querySelectorAll('.btn-check:checked')).map(c => c.value).join(", ");
 
-        const seriesArr = Array.from(document.querySelectorAll('.serie:checked')).map(c => c.value);
-        const seriesStr = seriesArr.length > 0 ? seriesArr.join(", ") : "Nenhuma";
+        if (!isbn || !titulo) { alert("Escaneie um livro e digite o título!"); return; }
 
-        const itemExistente = inventario.find(i => i.ISBN === isbn && i.Serie === seriesStr);
-        if (itemExistente) {
-            itemExistente.Quantidade += 1;
-        } else {
-            inventario.push({ 
-                ISBN: isbn, 
-                Titulo: titulo.trim(), 
-                Autor: document.getElementById('autor').value || "Não informado", 
-                Ano: document.getElementById('ano').value || "Não informado", 
-                Serie: seriesStr, 
-                Quantidade: 1 
+        const idx = inventory.findIndex(i => i.ISBN === isbn && i.Serie === series);
+        if (idx > -1) { inventory[idx].Quantidade += 1; }
+        else {
+            inventory.push({ 
+                ISBN: isbn, Titulo: titulo, Autor: document.getElementById('autor').value, 
+                Ano: document.getElementById('ano').value, Serie: series || "Nenhuma", Quantidade: 1 
             });
         }
-
-        atualizarLog();
+        updateLog();
         resetForm();
     }
 
-    function atualizarLog() {
-        const display = document.getElementById('csvDisplay');
-        let txt = "ISBN;Titulo;Autor;Ano;Serie;Quantidade";
-        inventario.forEach(i => {
-            txt += `\n${i.ISBN};${i.Titulo};${i.Autor};${i.Ano};${i.Serie};${i.Quantidade}`;
+    function updateLog() {
+        const preview = document.getElementById('csvPreview');
+        let txt = "ISBN;Titulo;Qtd";
+        inventory.slice(-5).reverse().forEach(i => {
+            txt += `<br>${i.ISBN}; ${i.Titulo.substring(0,15)}...; ${i.Quantidade}`;
         });
-        display.innerText = txt;
+        preview.innerHTML = txt;
     }
 
     function resetForm() {
@@ -185,19 +190,14 @@
         document.getElementById('titulo').value = "";
         document.getElementById('autor').value = "";
         document.getElementById('ano').value = "";
-        document.querySelectorAll('.serie').forEach(c => c.checked = false);
-        
-        // Volta status para AMARELO
-        const status = document.getElementById('statusIndicator');
-        status.innerText = "🟡 Aguardando leitura de código...";
-        status.className = "status-aguardando";
-        
-        travado = false; 
+        document.querySelectorAll('.btn-check').forEach(c => c.checked = false);
+        document.getElementById('statusLabel').innerText = "AGUARDANDO LEITURA...";
+        document.getElementById('statusLabel').className = "status-badge status-wait";
+        isPaused = false;
     }
 
-    function gerarExcel() {
-        if (inventario.length === 0) return;
-        const ws = XLSX.utils.json_to_sheet(inventario);
+    function downloadExcel() {
+        const ws = XLSX.utils.json_to_sheet(inventory);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Inventario");
         XLSX.writeFile(wb, "books_db.xlsx");
