@@ -3,48 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scanner Mobile v11 - Fix</title>
+    <title>Scanner Acervo - Estável</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f0f2f5; font-family: sans-serif; }
-        #interactive { width: 100%; height: 280px; background: #000; position: relative; border-radius: 0 0 20px 20px; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .laser { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: red; box-shadow: 0 0 8px red; z-index: 10; animation: move 2s infinite; }
+        body { background: #f4f7f6; font-family: sans-serif; margin: 0; padding-bottom: 50px; }
+        /* Garante que o container de vídeo seja único e limpo */
+        #interactive { 
+            width: 100%; 
+            height: 280px; 
+            background: #000; 
+            position: relative; 
+            border-bottom: 5px solid #28a745;
+        }
+        #interactive video, #interactive canvas { 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+        }
+        .laser { 
+            position: absolute; top: 50%; left: 0; right: 0; 
+            height: 2px; background: red; z-index: 10; 
+            box-shadow: 0 0 8px red; animation: move 2s infinite; 
+        }
         @keyframes move { 0%, 100% { top: 30%; } 50% { top: 70%; } }
-        .info-card { background: white; border-radius: 20px; padding: 20px; margin-top: -20px; position: relative; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .status-banner { font-size: 0.8rem; font-weight: bold; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
-        .status-waiting { background: #eee; color: #666; }
-        .status-detected { background: #d4edda; color: #155724; }
-        .btn-flip { position: absolute; bottom: 10px; right: 10px; z-index: 30; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 20px; padding: 5px 15px; font-size: 0.7rem; }
+        
+        .app-body { padding: 20px; margin-top: -20px; background: white; border-radius: 25px 25px 0 0; position: relative; z-index: 100; }
+        .status-box { padding: 10px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 15px; font-size: 0.8rem; }
+        .waiting { background: #f8f9fa; color: #666; border: 1px solid #ddd; }
+        .detected { background: #d4edda; color: #155724; border: 1px solid #28a745; }
+        
+        .form-input { border: none; background: #f1f3f5; border-radius: 12px; padding: 12px; margin-bottom: 10px; width: 100%; font-weight: 500; }
+        .btn-save { background: #28a745; color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; }
+        .btn-cam { font-size: 0.7rem; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div id="interactive">
     <div class="laser"></div>
-    <button class="btn-flip" onclick="flipCamera()">🔄 Inverter/Trocar Câmera</button>
 </div>
 
-<div class="container" style="max-width: 500px;">
-    <div class="info-card">
-        <div id="statusTag" class="status-banner status-waiting">Aguardando Câmera...</div>
-        
-        <input type="text" id="isbn" class="form-control mb-2 fw-bold" readonly placeholder="ISBN">
-        <input type="text" id="titulo" class="form-control mb-2" placeholder="Título (Obrigatório)">
-        <input type="text" id="autor" class="form-control mb-2" placeholder="Autor">
-        <input type="text" id="ano" class="form-control mb-2" placeholder="Ano">
+<div class="app-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <button class="btn btn-outline-dark btn-sm btn-cam" onclick="toggleCamera()">Inverter Câmera</button>
+        <button class="btn btn-outline-danger btn-sm btn-cam" onclick="location.reload()">Reiniciar App</button>
+    </div>
 
-        <div class="d-flex flex-wrap gap-2 mb-3">
-            <input type="checkbox" class="btn-check" id="y6" value="Y6"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y6">Y6</label>
-            <input type="checkbox" class="btn-check" id="y7" value="Y7"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y7">Y7</label>
-            <input type="checkbox" class="btn-check" id="y8" value="Y8"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y8">Y8</label>
-            <input type="checkbox" class="btn-check" id="y9" value="Y9"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y9">Y9</label>
+    <div id="statusTag" class="status-box waiting">AGUARDANDO LEITURA...</div>
+
+    <input type="text" id="isbn" class="form-input fw-bold" readonly placeholder="ISBN">
+    <input type="text" id="titulo" class="form-input" placeholder="Título do Livro">
+    <input type="text" id="autor" class="form-input" placeholder="Autor">
+    <input type="text" id="ano" class="form-input" placeholder="Ano">
+
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <input type="checkbox" class="btn-check" id="y6" value="Y6"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y6">Y6</label>
+        <input type="checkbox" class="btn-check" id="y7" value="Y7"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y7">Y7</label>
+        <input type="checkbox" class="btn-check" id="y8" value="Y8"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y8">Y8</label>
+        <input type="checkbox" class="btn-check" id="y9" value="Y9"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y9">Y9</label>
+    </div>
+
+    <button class="btn-save shadow" onclick="saveData()">SALVAR REGISTRO</button>
+    
+    <div class="mt-4 p-3 bg-dark text-white rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold">ACUMULADO CSV</span>
+            <button class="btn btn-primary btn-sm" onclick="downloadExcel()">BAIXAR EXCEL</button>
         </div>
-
-        <button class="btn btn-success w-100 fw-bold py-3 mb-2" style="border-radius:15px" onclick="saveData()">ADICIONAR LIVRO</button>
-        <button class="btn btn-outline-dark w-100 btn-sm" onclick="downloadExcel()">BAIXAR EXCEL</button>
+        <div id="csvPreview" style="font-size: 0.6rem; font-family: monospace; opacity: 0.7; overflow-x: auto;"></div>
     </div>
 </div>
 
@@ -53,37 +82,44 @@
     let isPaused = false;
     let useTraseira = true;
 
-    function startCam() {
-        // Para qualquer instância anterior
-        Quagga.stop();
-        
-        const constraints = {
-            facingMode: useTraseira ? "environment" : "user"
-        };
+    async function initScanner() {
+        // Limpeza profunda: remove qualquer elemento de vídeo ou canvas residual
+        const container = document.querySelector("#interactive");
+        const oldVideo = container.querySelector("video");
+        const oldCanvas = container.querySelector("canvas");
+        if (oldVideo) oldVideo.remove();
+        if (oldCanvas) oldCanvas.remove();
+
+        try {
+            await Quagga.stop();
+        } catch(e) {}
 
         Quagga.init({
             inputStream: {
                 name: "Live",
-                target: "#interactive",
                 type: "LiveStream",
-                constraints: constraints
+                target: "#interactive",
+                constraints: {
+                    facingMode: useTraseira ? "environment" : "user",
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                },
             },
             decoder: { readers: ["ean_reader", "code_128_reader"] },
             locate: true
         }, function(err) {
             if (err) {
                 console.error(err);
-                document.getElementById('statusTag').innerText = "ERRO: PERMISSÃO NEGADA";
+                document.getElementById('statusTag').innerText = "ERRO: ACESSO À CÂMERA NEGADO";
                 return;
             }
-            document.getElementById('statusTag').innerText = "PRONTO PARA ESCANEAR";
             Quagga.start();
         });
     }
 
-    function flipCamera() {
+    function toggleCamera() {
         useTraseira = !useTraseira;
-        startCam();
+        initScanner();
     }
 
     Quagga.onDetected(data => {
@@ -91,21 +127,21 @@
             isPaused = true;
             const code = data.codeResult.code;
             document.getElementById('isbn').value = code;
-            document.getElementById('statusTag').innerText = "BUSCANDO NO GOOGLE...";
-            document.getElementById('statusTag').className = "status-banner status-detected";
+            document.getElementById('statusTag').innerText = "BUSCANDO DADOS...";
+            document.getElementById('statusTag').className = "status-box detected";
             if (navigator.vibrate) navigator.vibrate(100);
             fetchBook(code);
         }
     });
 
     async function fetchBook(isbn) {
-        document.getElementById('titulo').value = "Buscando...";
         try {
-            // Busca Dupla: ISBN específico e Busca Geral
+            // Tentativa prioritária em Português
             let res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
             let data = await res.json();
             
             if (!data.items) {
+                // Segunda tentativa: busca geral
                 res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${isbn}&hl=pt-BR`);
                 data = await res.json();
             }
@@ -115,222 +151,31 @@
                 document.getElementById('titulo').value = info.title || "";
                 document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "";
                 document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "";
-                document.getElementById('statusTag').innerText = "ENCONTRADO!";
-            } else {
-                document.getElementById('titulo').value = "";
-                document.getElementById('statusTag').innerText = "NÃO ACHOU (DIGITE)";
             }
-        } catch(e) {
-            document.getElementById('titulo').value = "";
-            document.getElementById('statusTag').innerText = "ERRO DE REDE";
-        }
+        } catch(e) {}
     }
 
     function saveData() {
         const isbn = document.getElementById('isbn').value;
         const titulo = document.getElementById('titulo').value;
-        if (!isbn || !titulo || titulo === "Buscando...") { alert("ISBN e Título obrigatórios!"); return; }
+        if (!isbn || !titulo) { alert("Obrigatório: ISBN e Título"); return; }
 
         const series = Array.from(document.querySelectorAll('.btn-check:checked')).map(c => c.value).join(", ");
-        const idx = inventory.findIndex(i => i.ISBN === isbn && i.Serie === series);
         
-        if (idx > -1) { inventory[idx].Quantidade += 1; }
-        else {
-            inventory.push({ 
-                ISBN: isbn, Titulo: titulo, Autor: document.getElementById('autor').value, 
-                Ano: document.getElementById('ano').value, Serie: series || "Nenhuma", Quantidade: 1 
-            });
-        }
-        resetForm();
-    }
-
-    function resetForm() {
-        document.getElementById('isbn').value = "";
-        document.getElementById('titulo').value = "";
-        document.getElementById('autor').value = "";
-        document.getElementById('ano').value = "";
-        document.querySelectorAll('.btn-check').forEach(c => c.checked = false);
-        document.getElementById('statusTag').innerText = "PRONTO PARA ESCANEAR";
-        document.getElementById('statusTag').className = "status-banner status-waiting";
-        isPaused = false;
-    }
-
-    function downloadExcel() {
-        const ws = XLSX.utils.json_to_sheet(inventory);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-        XLSX.writeFile(wb, "books_db.xlsx");
-    }
-
-    window.onload = startCam;
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scanner Mobile v10</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #f0f2f5; font-family: 'Segoe UI', system-ui, sans-serif; }
-        #interactive { width: 100%; height: 280px; border-radius: 0 0 25px 25px; background: #000; overflow: hidden; position: relative; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        .laser { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: rgba(255, 0, 0, 0.7); box-shadow: 0 0 8px red; z-index: 10; animation: move 2s infinite; }
-        @keyframes move { 0%, 100% { top: 30%; } 50% { top: 70%; } }
-        
-        .info-card { background: white; border-radius: 20px; padding: 20px; margin-top: -30px; position: relative; z-index: 20; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
-        .status-banner { font-size: 0.8rem; font-weight: 800; padding: 10px; border-radius: 12px; text-align: center; margin-bottom: 15px; }
-        .status-waiting { background: #fff3cd; color: #856404; }
-        .status-loading { background: #cce5ff; color: #004085; }
-        .status-detected { background: #d4edda; color: #155724; border: 2px solid #28a745; }
-        
-        .form-control-custom { border: none; background: #f1f3f5; border-radius: 12px; padding: 12px; margin-bottom: 10px; font-weight: 500; width: 100%; }
-        .btn-save { background: #28a745; color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3); }
-        .btn-flip { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; border-radius: 50px; padding: 5px 15px; font-size: 0.7rem; position: absolute; bottom: 10px; right: 10px; z-index: 30; backdrop-filter: blur(5px); }
-        
-        .export-section { background: #343a40; color: white; border-radius: 20px; padding: 20px; margin: 20px 10px; }
-        #csvPreview { font-family: monospace; font-size: 0.7rem; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; max-height: 100px; overflow-y: auto; }
-    </style>
-</head>
-<body>
-
-<div id="interactive">
-    <div class="laser"></div>
-    <button class="btn-flip" onclick="flipCamera()">🔄 Inverter Câmera</button>
-</div>
-
-<div class="container" style="max-width: 500px;">
-    <div class="info-card">
-        <div id="statusTag" class="status-banner status-waiting">Aguardando Código...</div>
-        
-        <input type="text" id="isbn" class="form-control-custom fw-bold" readonly placeholder="ISBN">
-        <input type="text" id="titulo" class="form-control-custom" placeholder="Título (Obrigatório)">
-        <input type="text" id="autor" class="form-control-custom" placeholder="Autor">
-        <input type="text" id="ano" class="form-control-custom" placeholder="Ano">
-
-        <div class="d-flex flex-wrap gap-2 mb-3 mt-1">
-            <input type="checkbox" class="btn-check" id="y6" value="Y6"><label class="btn btn-outline-secondary btn-sm rounded-pill" for="y6">Y6</label>
-            <input type="checkbox" class="btn-check" id="y7" value="Y7"><label class="btn btn-outline-secondary btn-sm rounded-pill" for="y7">Y7</label>
-            <input type="checkbox" class="btn-check" id="y8" value="Y8"><label class="btn btn-outline-secondary btn-sm rounded-pill" for="y8">Y8</label>
-            <input type="checkbox" class="btn-check" id="y9" value="Y9"><label class="btn btn-outline-secondary btn-sm rounded-pill" for="y9">Y9</label>
-        </div>
-
-        <button class="btn-save" onclick="saveData()">ADICIONAR LIVRO</button>
-    </div>
-
-    <div class="export-section">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="m-0 fw-bold">Registro CSV</h6>
-            <button class="btn btn-primary btn-sm rounded-pill" onclick="downloadExcel()">BAIXAR EXCEL</button>
-        </div>
-        <div id="csvPreview">ISBN;Titulo;Qtd</div>
-    </div>
-</div>
-
-<script>
-    let inventory = [];
-    let isPaused = false;
-    let currentFacingMode = "environment"; // Inicia com a traseira
-
-    function startCam() {
-        Quagga.stop();
-        Quagga.init({
-            inputStream: { 
-                name: "Live", 
-                target: "#interactive", 
-                constraints: { 
-                    facingMode: currentFacingMode,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
-            },
-            decoder: { readers: ["ean_reader", "code_128_reader"] },
-            locate: true
-        }, (err) => { 
-            if (err) { 
-                console.error(err); 
-                document.getElementById('statusTag').innerText = "ERRO NA CÂMERA";
-                return; 
-            }
-            Quagga.start(); 
+        inventory.push({ 
+            ISBN: isbn, Titulo: titulo, Autor: document.getElementById('autor').value, 
+            Ano: document.getElementById('ano').value, Serie: series || "Nenhuma", Quantidade: 1 
         });
-    }
 
-    function flipCamera() {
-        currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
-        startCam();
-    }
-
-    Quagga.onDetected(data => {
-        if (!isPaused) {
-            isPaused = true;
-            const code = data.codeResult.code.trim();
-            document.getElementById('isbn').value = code;
-            document.getElementById('statusTag').innerText = "BUSCANDO DADOS...";
-            document.getElementById('statusTag').className = "status-banner status-loading";
-            if (navigator.vibrate) navigator.vibrate(100);
-            fetchBook(code);
-        }
-    });
-
-    async function fetchBook(isbn) {
-        document.getElementById('titulo').value = "Buscando...";
-        try {
-            // Tentativa de busca com hl=pt-BR para livros brasileiros
-            let response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
-            let data = await response.json();
-
-            // Fallback: Busca geral pelo número se o filtro de ISBN falhar
-            if (!data.items) {
-                response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${isbn}&hl=pt-BR`);
-                data = await response.json();
-            }
-
-            if (data.items) {
-                const info = data.items[0].volumeInfo;
-                document.getElementById('titulo').value = info.title || "";
-                document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "";
-                document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "";
-                document.getElementById('statusTag').innerText = "LIVRO ENCONTRADO!";
-                document.getElementById('statusTag').className = "status-banner status-detected";
-            } else {
-                document.getElementById('titulo').value = "";
-                document.getElementById('statusTag').innerText = "NÃO ENCONTRADO (DIGITE MANUAL)";
-                document.getElementById('statusTag').className = "status-banner status-waiting";
-            }
-        } catch(e) {
-            document.getElementById('titulo').value = "";
-            document.getElementById('statusTag').innerText = "ERRO DE CONEXÃO";
-        }
-    }
-
-    function saveData() {
-        const isbn = document.getElementById('isbn').value;
-        const titulo = document.getElementById('titulo').value;
-        if (!isbn || !titulo || titulo === "Buscando...") { alert("ISBN e Título são obrigatórios!"); return; }
-
-        const series = Array.from(document.querySelectorAll('.btn-check:checked')).map(c => c.value).join(", ");
-        const idx = inventory.findIndex(i => i.ISBN === isbn && i.Serie === series);
-        
-        if (idx > -1) { inventory[idx].Quantidade += 1; }
-        else {
-            inventory.push({ 
-                ISBN: isbn, Titulo: titulo, Autor: document.getElementById('autor').value, 
-                Ano: document.getElementById('ano').value, Serie: series || "Nenhuma", Quantidade: 1 
-            });
-        }
         updateLog();
         resetForm();
     }
 
     function updateLog() {
         const preview = document.getElementById('csvPreview');
-        let txt = "ISBN;Titulo;Qtd";
+        let txt = "ISBN;TITULO;SÉRIE";
         inventory.slice().reverse().forEach(i => {
-            txt += `<br>${i.ISBN}; ${i.Titulo.substring(0,20)}; Qtd:${i.Quantidade}`;
+            txt += `<br>${i.ISBN}; ${i.Titulo.substring(0,15)}; ${i.Serie}`;
         });
         preview.innerHTML = txt;
     }
@@ -341,21 +186,20 @@
         document.getElementById('autor').value = "";
         document.getElementById('ano').value = "";
         document.querySelectorAll('.btn-check').forEach(c => c.checked = false);
-        document.getElementById('statusTag').innerText = "Aguardando Código...";
-        document.getElementById('statusTag').className = "status-banner status-waiting";
+        document.getElementById('statusTag').innerText = "AGUARDANDO LEITURA...";
+        document.getElementById('statusTag').className = "status-box waiting";
         isPaused = false;
     }
 
     function downloadExcel() {
         const ws = XLSX.utils.json_to_sheet(inventory);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+        XLSX.utils.book_append_sheet(wb, ws, "Books");
         XLSX.writeFile(wb, "books_db.xlsx");
     }
 
-    // Inicia na câmera traseira ao carregar
-    window.onload = startCam;
+    // Inicialização automática
+    window.onload = initScanner;
 </script>
 </body>
 </html>
-
