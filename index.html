@@ -3,6 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scanner Mobile v11 - Fix</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; font-family: sans-serif; }
+        #interactive { width: 100%; height: 280px; background: #000; position: relative; border-radius: 0 0 20px 20px; }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .laser { position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: red; box-shadow: 0 0 8px red; z-index: 10; animation: move 2s infinite; }
+        @keyframes move { 0%, 100% { top: 30%; } 50% { top: 70%; } }
+        .info-card { background: white; border-radius: 20px; padding: 20px; margin-top: -20px; position: relative; z-index: 20; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .status-banner { font-size: 0.8rem; font-weight: bold; padding: 10px; border-radius: 10px; text-align: center; margin-bottom: 10px; }
+        .status-waiting { background: #eee; color: #666; }
+        .status-detected { background: #d4edda; color: #155724; }
+        .btn-flip { position: absolute; bottom: 10px; right: 10px; z-index: 30; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 20px; padding: 5px 15px; font-size: 0.7rem; }
+    </style>
+</head>
+<body>
+
+<div id="interactive">
+    <div class="laser"></div>
+    <button class="btn-flip" onclick="flipCamera()">🔄 Inverter/Trocar Câmera</button>
+</div>
+
+<div class="container" style="max-width: 500px;">
+    <div class="info-card">
+        <div id="statusTag" class="status-banner status-waiting">Aguardando Câmera...</div>
+        
+        <input type="text" id="isbn" class="form-control mb-2 fw-bold" readonly placeholder="ISBN">
+        <input type="text" id="titulo" class="form-control mb-2" placeholder="Título (Obrigatório)">
+        <input type="text" id="autor" class="form-control mb-2" placeholder="Autor">
+        <input type="text" id="ano" class="form-control mb-2" placeholder="Ano">
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+            <input type="checkbox" class="btn-check" id="y6" value="Y6"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y6">Y6</label>
+            <input type="checkbox" class="btn-check" id="y7" value="Y7"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y7">Y7</label>
+            <input type="checkbox" class="btn-check" id="y8" value="Y8"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y8">Y8</label>
+            <input type="checkbox" class="btn-check" id="y9" value="Y9"><label class="btn btn-outline-primary btn-sm rounded-pill" for="y9">Y9</label>
+        </div>
+
+        <button class="btn btn-success w-100 fw-bold py-3 mb-2" style="border-radius:15px" onclick="saveData()">ADICIONAR LIVRO</button>
+        <button class="btn btn-outline-dark w-100 btn-sm" onclick="downloadExcel()">BAIXAR EXCEL</button>
+    </div>
+</div>
+
+<script>
+    let inventory = [];
+    let isPaused = false;
+    let useTraseira = true;
+
+    function startCam() {
+        // Para qualquer instância anterior
+        Quagga.stop();
+        
+        const constraints = {
+            facingMode: useTraseira ? "environment" : "user"
+        };
+
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                target: "#interactive",
+                type: "LiveStream",
+                constraints: constraints
+            },
+            decoder: { readers: ["ean_reader", "code_128_reader"] },
+            locate: true
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                document.getElementById('statusTag').innerText = "ERRO: PERMISSÃO NEGADA";
+                return;
+            }
+            document.getElementById('statusTag').innerText = "PRONTO PARA ESCANEAR";
+            Quagga.start();
+        });
+    }
+
+    function flipCamera() {
+        useTraseira = !useTraseira;
+        startCam();
+    }
+
+    Quagga.onDetected(data => {
+        if (!isPaused) {
+            isPaused = true;
+            const code = data.codeResult.code;
+            document.getElementById('isbn').value = code;
+            document.getElementById('statusTag').innerText = "BUSCANDO NO GOOGLE...";
+            document.getElementById('statusTag').className = "status-banner status-detected";
+            if (navigator.vibrate) navigator.vibrate(100);
+            fetchBook(code);
+        }
+    });
+
+    async function fetchBook(isbn) {
+        document.getElementById('titulo').value = "Buscando...";
+        try {
+            // Busca Dupla: ISBN específico e Busca Geral
+            let res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
+            let data = await res.json();
+            
+            if (!data.items) {
+                res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${isbn}&hl=pt-BR`);
+                data = await res.json();
+            }
+
+            if (data.items) {
+                const info = data.items[0].volumeInfo;
+                document.getElementById('titulo').value = info.title || "";
+                document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "";
+                document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "";
+                document.getElementById('statusTag').innerText = "ENCONTRADO!";
+            } else {
+                document.getElementById('titulo').value = "";
+                document.getElementById('statusTag').innerText = "NÃO ACHOU (DIGITE)";
+            }
+        } catch(e) {
+            document.getElementById('titulo').value = "";
+            document.getElementById('statusTag').innerText = "ERRO DE REDE";
+        }
+    }
+
+    function saveData() {
+        const isbn = document.getElementById('isbn').value;
+        const titulo = document.getElementById('titulo').value;
+        if (!isbn || !titulo || titulo === "Buscando...") { alert("ISBN e Título obrigatórios!"); return; }
+
+        const series = Array.from(document.querySelectorAll('.btn-check:checked')).map(c => c.value).join(", ");
+        const idx = inventory.findIndex(i => i.ISBN === isbn && i.Serie === series);
+        
+        if (idx > -1) { inventory[idx].Quantidade += 1; }
+        else {
+            inventory.push({ 
+                ISBN: isbn, Titulo: titulo, Autor: document.getElementById('autor').value, 
+                Ano: document.getElementById('ano').value, Serie: series || "Nenhuma", Quantidade: 1 
+            });
+        }
+        resetForm();
+    }
+
+    function resetForm() {
+        document.getElementById('isbn').value = "";
+        document.getElementById('titulo').value = "";
+        document.getElementById('autor').value = "";
+        document.getElementById('ano').value = "";
+        document.querySelectorAll('.btn-check').forEach(c => c.checked = false);
+        document.getElementById('statusTag').innerText = "PRONTO PARA ESCANEAR";
+        document.getElementById('statusTag').className = "status-banner status-waiting";
+        isPaused = false;
+    }
+
+    function downloadExcel() {
+        const ws = XLSX.utils.json_to_sheet(inventory);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+        XLSX.writeFile(wb, "books_db.xlsx");
+    }
+
+    window.onload = startCam;
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Scanner Mobile v10</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -191,3 +358,4 @@
 </script>
 </body>
 </html>
+
