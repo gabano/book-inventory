@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scanner Acervo - Cloud Sync</title>
+    <title>Scanner Acervo - Camera Select</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -37,7 +37,8 @@
         
         .form-input { border: none; background: #f1f3f5; border-radius: 12px; padding: 12px; margin-bottom: 10px; width: 100%; font-weight: 500; }
         .btn-save { background: #28a745; color: white; border: none; border-radius: 15px; padding: 15px; font-weight: bold; width: 100%; }
-        .btn-cam { font-size: 0.7rem; margin-bottom: 10px; }
+        .btn-cam { font-size: 0.7rem; }
+        .cam-select { font-size: 0.8rem; border-radius: 10px; background: #f8f9fa; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -47,9 +48,14 @@
 </div>
 
 <div class="app-body">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-        <button class="btn btn-outline-dark btn-sm btn-cam" onclick="toggleCamera()">Inverter Câmera</button>
-        <button class="btn btn-outline-danger btn-sm btn-cam" onclick="location.reload()">Reiniciar App</button>
+    <div class="mb-2">
+        <label class="small fw-bold text-muted">SELECIONAR CÂMERA:</label>
+        <select id="cameraList" class="form-select cam-select" onchange="changeCamera(this.value)">
+            <option value="">Carregando câmeras...</option>
+        </select>
+        <div class="d-flex justify-content-between align-items-center">
+            <button class="btn btn-outline-danger btn-sm btn-cam" onclick="location.reload()">Reiniciar App</button>
+        </div>
     </div>
 
     <div id="statusTag" class="status-box waiting">AGUARDANDO LEITURA...</div>
@@ -70,7 +76,7 @@
     
     <div class="mt-4 p-3 bg-dark text-white rounded-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="small fw-bold">ULTIMOS REGISTROS (LOCAL)</span>
+            <span class="small fw-bold">LOCAL LOG</span>
             <button class="btn btn-primary btn-sm" onclick="downloadExcel()">BAIXAR EXCEL</button>
         </div>
         <div id="csvPreview" style="font-size: 0.6rem; font-family: monospace; opacity: 0.7; overflow-x: auto;"></div>
@@ -78,14 +84,37 @@
 </div>
 
 <script>
-    // --- CONFIGURAÇÃO ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMlVXrk_UhYqOEaxsdOf2LjyCgmlSmsw4mt69eIAkN61VfcUDjjUQqCfjfLA4M4UCt2w/exec'; 
+    const SCRIPT_URL = 'SUA_URL_DO_DEPLOY_AQUI'; 
 
     let inventory = [];
     let isPaused = false;
-    let useTraseira = true;
+    let currentCameraId = null;
 
-    async function initScanner() {
+    // Detect available cameras and populate dropdown
+    async function listCameras() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            const select = document.getElementById('cameraList');
+            select.innerHTML = '';
+
+            videoDevices.forEach((device, index) => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || `Câmera ${index + 1}`;
+                select.appendChild(option);
+            });
+
+            if (videoDevices.length > 0) {
+                currentCameraId = videoDevices[0].deviceId;
+                initScanner(currentCameraId);
+            }
+        } catch (e) {
+            console.error("Erro ao listar câmeras:", e);
+        }
+    }
+
+    async function initScanner(deviceId) {
         const container = document.querySelector("#interactive");
         const oldVideo = container.querySelector("video");
         const oldCanvas = container.querySelector("canvas");
@@ -94,13 +123,17 @@
 
         try { await Quagga.stop(); } catch(e) {}
 
+        const constraints = deviceId 
+            ? { deviceId: { exact: deviceId } } 
+            : { facingMode: "environment" };
+
         Quagga.init({
             inputStream: {
                 name: "Live",
                 type: "LiveStream",
                 target: "#interactive",
                 constraints: {
-                    facingMode: useTraseira ? "environment" : "user",
+                    ...constraints,
                     width: { ideal: 640 },
                     height: { ideal: 480 }
                 },
@@ -116,9 +149,9 @@
         });
     }
 
-    function toggleCamera() {
-        useTraseira = !useTraseira;
-        initScanner();
+    function changeCamera(deviceId) {
+        currentCameraId = deviceId;
+        initScanner(deviceId);
     }
 
     Quagga.onDetected(data => {
@@ -137,65 +170,48 @@
         try {
             let res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&hl=pt-BR`);
             let data = await res.json();
-            if (!data.items) {
-                res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${isbn}&hl=pt-BR`);
-                data = await res.json();
-            }
             if (data.items) {
                 const info = data.items[0].volumeInfo;
                 document.getElementById('titulo').value = info.title || "";
                 document.getElementById('autor').value = info.authors ? info.authors.join(", ") : "";
                 document.getElementById('ano').value = info.publishedDate ? info.publishedDate.substring(0,4) : "";
             }
-        } catch(e) {
-            console.error("Erro na busca do livro:", e);
-        }
+        } catch(e) {}
     }
 
     async function saveData() {
         const isbn = document.getElementById('isbn').value;
         const titulo = document.getElementById('titulo').value;
-        const autor = document.getElementById('autor').value;
-        const ano = document.getElementById('ano').value;
         const series = Array.from(document.querySelectorAll('.btn-check:checked')).map(c => c.value).join(", ");
 
         if (!isbn || !titulo) { alert("Obrigatório: ISBN e Título"); return; }
 
         const bookData = { 
-            ISBN: isbn, 
-            Titulo: titulo, 
-            Autor: autor, 
-            Ano: ano, 
+            ISBN: isbn, Titulo: titulo, 
+            Autor: document.getElementById('autor').value, 
+            Ano: document.getElementById('ano').value, 
             Serie: series || "Nenhuma",
             Quantidade: 1
         };
 
-        // UI Feedback
         const saveBtn = document.getElementById('saveBtn');
-        const statusTag = document.getElementById('statusTag');
         saveBtn.disabled = true;
-        statusTag.innerText = "SINCRONIZANDO COM PLANILHA...";
-        statusTag.className = "status-box syncing";
+        document.getElementById('statusTag').innerText = "SINCRONIZANDO...";
+        document.getElementById('statusTag').className = "status-box syncing";
 
         try {
-            // Envio para Google Sheets
             await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors', 
-                cache: 'no-cache',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookData)
             });
 
-            // Adiciona ao log local apenas se o envio (teoricamente) funcionou
             inventory.push(bookData);
             updateLog();
             resetForm();
-            alert("Sucesso! Livro registrado na nuvem.");
-            
         } catch (e) {
-            console.error(e);
-            alert("Erro ao conectar com o Google Sheets. Verifique o URL do script.");
+            alert("Erro ao salvar.");
         } finally {
             saveBtn.disabled = false;
         }
@@ -222,14 +238,14 @@
     }
 
     function downloadExcel() {
-        if (inventory.length === 0) { alert("Nenhum dado para baixar."); return; }
         const ws = XLSX.utils.json_to_sheet(inventory);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Books");
-        XLSX.writeFile(wb, "biblioteca_acervo.xlsx");
+        XLSX.writeFile(wb, "acervo.xlsx");
     }
 
-    window.onload = initScanner;
+    // Call listCameras on start
+    window.onload = listCameras;
 </script>
 </body>
 </html>
