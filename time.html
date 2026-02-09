@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maple Bear School Timetables 2026 - All Classes</title>
+    <style>
+        @font-face {
+            font-family: 'Century Gothic';
+            src: local('Century Gothic'), local('CenturyGothic');
+        }
+        
+        body {
+            font-family: 'Century Gothic', sans-serif;
+            background-color: #f8f9fa;
+            color: black;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timetable-section {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 50px;
+            page-break-after: always;
+        }
+
+        .header-line {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #b80c0c;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+            width: 15%;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .period-cell {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            width: 130px;
+        }
+
+        .break-row {
+            background-color: #fff3f3;
+            font-weight: bold;
+            color: #b80c0c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9em;
+        }
+
+        .subject {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .teacher {
+            display: block;
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        @media print {
+            body { background-color: white; padding: 0; }
+            .timetable-section { box-shadow: none; padding: 0; margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y6A - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (9:40 - 10:00)</td></tr>
+                <tr><td class="period-cell">4th (10:00-11:00)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y6B - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (9:40 - 10:00)</td></tr>
+                <tr><td class="period-cell">4th (10:00-11:00)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Layla</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Thayna</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Liz</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Mr. Henrique</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y7A - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Ms. Irla</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (9:50 - 10:10)</td></tr>
+                <tr><td class="period-cell">4th (10:10-11:00)</td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Vaitiare</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">ESC</span><span class="teacher">Ms. Mila</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Taíse</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Julia</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y7B - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (9:50 - 10:10)</td></tr>
+                <tr><td class="period-cell">4th (10:10-11:00)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Sara</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">MATH</span><span class="teacher">Ms. Alini</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Aline</span></td><td><span class="subject">ESC</span><span class="teacher">Ms. Mila</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y8 - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (10:00 - 10:20)</td></tr>
+                <tr><td class="period-cell">4th (10:20-11:00)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td><td><span class="subject">ESC</span><span class="teacher">Ms. Mila</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timetable-section">
+        <div class="header-line">
+            <img src="mb-logo.png" class="logo" alt="Logo">
+            <h1 class="title">Timetable - Y9 - 2026</h1>
+        </div>
+        <table>
+            <thead><tr><th>Period / Time</th><th>Monday</th><th>Tuesday</th><th>Wednesday</th><th>Thursday</th><th>Friday</th></tr></thead>
+            <tbody>
+                <tr><td class="period-cell">1st (7:20-8:10)</td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td></tr>
+                <tr><td class="period-cell">2nd (8:10-9:00)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td></tr>
+                <tr><td class="period-cell">3rd (9:00-9:40)</td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td></tr>
+                <tr class="break-row"><td colspan="6">Snack Recess (10:00 - 10:20)</td></tr>
+                <tr><td class="period-cell">4th (10:20-11:00)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td></tr>
+                <tr><td class="period-cell">5th (11:00-11:50)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">ELA</span><span class="teacher">Ms. Silvia</span></td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td></tr>
+                <tr><td class="period-cell">6th (11:50-12:40)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">GEOGRAFIA</span><span class="teacher">Ms. Juliana</span></td><td><span class="subject">HISTÓRIA</span><span class="teacher">Mr. Pedro</span></td><td><span class="subject">MAT.OLYMPICS</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td></tr>
+                <tr class="break-row"><td colspan="6">Lunch (12:40 - 13:30)</td></tr>
+                <tr><td class="period-cell">7th (13:40-14:30)</td><td><span class="subject">MATH</span><span class="teacher">Mr. Lucas Issa</span></td><td><span class="subject">PE</span><span class="teacher">Mr. Lucas Oliveira</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td><td><span class="subject">SCIENCE</span><span class="teacher">Ms. Jhenifer</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td></tr>
+                <tr><td class="period-cell">8th (14:30-15:20)</td><td><span class="subject">PORTUGUÊS</span><span class="teacher">Ms. Cíntia Almeida</span></td><td><span class="subject">ARTE</span><span class="teacher">Ms. Cíntia Batista</span></td><td><span class="subject">FRANÇAIS</span><span class="teacher">Mme. Elen</span></td><td><span class="subject">MAT.APLICADA</span><span class="teacher">Ms. Josiane</span></td><td><span class="subject">ESC</span><span class="teacher">Ms. Mila</span></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>
